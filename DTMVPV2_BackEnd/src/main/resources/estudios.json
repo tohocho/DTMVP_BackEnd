@@ -1,0 +1,62 @@
+[
+    {
+        "identificadorEstudio": "EST001",
+        "unidadMedicaEnvia": "Hospital General Norte",
+        "unidadMedicaRecibe": "Centro de Especialidades Médicas",
+        "medicoEnvia": "Dr. Roberto Sánchez",
+        "nombreEstudio": "Resonancia Magnética Cerebral",
+        "notasEstudio": "Paciente presenta dolores de cabeza frecuentes, se requiere descartar tumores",
+        "fechaEnvio": "2024-03-01",
+        "paciente": {
+            "numeroSeguridadSocial": "12345678A"
+        }
+    },
+    {
+        "identificadorEstudio": "EST002",
+        "unidadMedicaEnvia": "Clínica Familiar 45",
+        "unidadMedicaRecibe": "Hospital de Cardiología",
+        "medicoEnvia": "Dra. María Rodríguez",
+        "nombreEstudio": "Ecocardiograma",
+        "notasEstudio": "Seguimiento de soplo cardíaco detectado en consulta rutinaria",
+        "fechaEnvio": "2024-03-02",
+        "paciente": {
+            "numeroSeguridadSocial": "23456789B"
+        }
+    },
+    {
+        "identificadorEstudio": "EST003",
+        "unidadMedicaEnvia": "Centro Médico Sur",
+        "unidadMedicaRecibe": "Instituto de Neurología",
+        "medicoEnvia": "Dr. Carlos Fernández",
+        "nombreEstudio": "Electroencefalograma",
+        "notasEstudio": "Paciente con episodios de ausencia, evaluar actividad cerebral",
+        "fechaEnvio": "2024-03-03",
+        "paciente": {
+            "numeroSeguridadSocial": "34567890C"
+        }
+    },
+    {
+        "identificadorEstudio": "EST004",
+        "unidadMedicaEnvia": "Hospital Pediátrico",
+        "unidadMedicaRecibe": "Centro de Diagnóstico",
+        "medicoEnvia": "Dra. Ana Pérez",
+        "nombreEstudio": "Tomografía Computarizada de Tórax",
+        "notasEstudio": "Control de seguimiento post-COVID",
+        "fechaEnvio": "2024-03-04",
+        "paciente": {
+            "numeroSeguridadSocial": "45678901D"
+        }
+    },
+    {
+        "identificadorEstudio": "EST005",
+        "unidadMedicaEnvia": "Clínica de Especialidades",
+        "unidadMedicaRecibe": "Laboratorio Central",
+        "medicoEnvia": "Dr. Miguel Torres",
+        "nombreEstudio": "Panel Completo de Alergias",
+        "notasEstudio": "Paciente con reacciones alérgicas recurrentes",
+        "fechaEnvio": "2024-03-05",
+        "paciente": {
+            "numeroSeguridadSocial": "56789012E"
+        }
+    }
+] 
