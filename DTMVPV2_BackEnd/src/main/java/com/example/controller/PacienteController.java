@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
@@ -62,7 +63,13 @@ public class PacienteController {
 
             // Convertir paciente a JSON y encriptar
             String pacienteJson = objectMapper.writeValueAsString(paciente);
-            String encryptedInfo = encryptionService.encrypt(pacienteJson);
+            String encryptedInfo;
+            try {
+                encryptedInfo = encryptionService.encrypt(pacienteJson);
+            } catch (Exception e) {
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(("Error al encriptar los datos: " + e.getMessage()).getBytes());
+            }
 
             // Generar PDF
             byte[] pdfContent = pdfService.generatePdf(
@@ -73,7 +80,7 @@ public class PacienteController {
             // Configurar headers para la descarga del PDF
             HttpHeaders headers = new HttpHeaders();
             headers.setContentType(MediaType.APPLICATION_PDF);
-            headers.setContentDispositionFormData("filename", "Paciente_" + paciente.getNombre() + "_" + numeroSeguridadSocial + "_encrypted.pdf");
+            headers.setContentDispositionFormData("filename", "paciente_" + numeroSeguridadSocial + "_encrypted.pdf");
 
             return ResponseEntity
                 .ok()
@@ -81,7 +88,8 @@ public class PacienteController {
                 .body(pdfContent);
 
         } catch (Exception e) {
-            return ResponseEntity.internalServerError().build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body(("Error en el proceso: " + e.getMessage()).getBytes());
         }
     }
 
