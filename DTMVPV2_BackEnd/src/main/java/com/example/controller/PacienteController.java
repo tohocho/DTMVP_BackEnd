@@ -45,6 +45,61 @@ public class PacienteController {
             return ResponseEntity.notFound().build();
         }
     }
+    @GetMapping("/json")
+    public ResponseEntity<List<Paciente>> getPacientesFromJson() {
+        try {
+            List<Paciente> pacientes = pacienteService.obtenerPacientes();
+            return ResponseEntity.ok(pacientes);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/guardar")
+    public ResponseEntity<String> guardarPaciente(@RequestBody Paciente paciente) {
+        try {
+            // Validar campos requeridos
+            if (paciente.getCurp() == null || paciente.getNombre() == null || 
+                paciente.getPrimerApellido() == null || paciente.getNumeroSeguridadSocial() == null) {
+                return ResponseEntity.badRequest().body("Faltan campos requeridos");
+            }
+
+            // Guardar en base de datos
+            Paciente savedPaciente = pacienteService.savePaciente(paciente);
+
+            // Guardar en archivo JSON
+            pacienteService.savePacienteToJson(savedPaciente);
+
+            return ResponseEntity.ok("Paciente guardado exitosamente");
+
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al guardar el paciente: " + e.getMessage());
+        }
+    }
+    @PostMapping("/pacienteGuardar")
+    public ResponseEntity<String> savePacienteToJson(@RequestBody Paciente paciente) {
+        try {
+            // Validar que el paciente no sea nulo
+            if (paciente == null) {
+                return ResponseEntity
+                    .badRequest()
+                    .body("El paciente no puede ser nulo");
+            }
+
+            // Intentar guardar el paciente en el archivo JSON
+            pacienteService.savePacienteToJson(paciente);
+
+            return ResponseEntity
+                .ok()
+                .body("Paciente guardado exitosamente en el archivo JSON");
+
+        } catch (Exception e) {
+            return ResponseEntity
+                .status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Error al guardar el paciente en el archivo JSON: " + e.getMessage());
+        }
+    }
 
     @PostMapping
     public ResponseEntity<Paciente> createPaciente(@RequestBody Paciente paciente) {
