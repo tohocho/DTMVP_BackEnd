@@ -10,6 +10,7 @@
         "estadoCivil": "Soltero",
         "sexo": "M",
         "fechaNacimiento": "1990-05-15",
+        "edad": 34,
         "tipoSangre": "O+"
     },
     {
@@ -23,6 +24,7 @@
         "estadoCivil": "Casada",
         "sexo": "F",
         "fechaNacimiento": "1985-08-22",
+        "edad": 39,
         "tipoSangre": "A+"
     },
     {
@@ -36,6 +38,7 @@
         "estadoCivil": "Soltero",
         "sexo": "M",
         "fechaNacimiento": "1992-03-10",
+        "edad": 33,
         "tipoSangre": "B+"
     },
     {
@@ -49,6 +52,7 @@
         "estadoCivil": "Divorciada",
         "sexo": "F",
         "fechaNacimiento": "1988-11-30",
+        "edad": 36,
         "tipoSangre": "AB+"
     },
     {
@@ -62,6 +66,21 @@
         "estadoCivil": "Casado",
         "sexo": "M",
         "fechaNacimiento": "1995-07-18",
+        "edad": 29,
         "tipoSangre": "O-"
+    },
+    {
+        "numeroSeguridadSocial": "2283756014",
+        "numeroExpediente": "123456",
+        "curp": "COTD940306HVZBRV00",
+        "nombre": "Jose David",
+        "primerApellido": "Cobos",
+        "segundoApellido": "Trujillo",
+        "escolaridad": "Licenciatura",
+        "estadoCivil": "Soltero",
+        "sexo": "M",
+        "fechaNacimiento": "2025-03-05",
+        "edad": 0,
+        "tipoSangre": "A+"
     }
-] 
+]
