@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.HashMap;
 import com.fasterxml.jackson.core.type.TypeReference;
 
 @RestController
@@ -65,8 +66,10 @@ public class PacienteController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    @PostMapping("/guardar")
-    public ResponseEntity<String> guardarPaciente(@RequestBody Paciente paciente) {
+
+    
+    @PostMapping("/pacienteGuardar")
+    public ResponseEntity<Map<String, Object>> guardarPaciente(@RequestBody Paciente paciente) {
         // Imprimir información del paciente recibido
         System.out.println("Datos del paciente recibido:");
         System.out.println("Número de Seguridad Social: " + paciente.getNumeroSeguridadSocial());
@@ -80,12 +83,17 @@ public class PacienteController {
         System.out.println("Fecha de Nacimiento: " + paciente.getFechaNacimiento());
         System.out.println("Tipo de Sangre: " + paciente.getTipoSangre());
         System.out.println("Método guardarPaciente() llamado con paciente: " + paciente);
+
+        Map<String, Object> response = new HashMap<>();
+
         try {
             // Validar campos requeridos
             if (paciente.getCurp() == null || paciente.getNombre() == null || 
                 paciente.getPrimerApellido() == null || paciente.getNumeroSeguridadSocial() == null) {
                 System.out.println("Error: Faltan campos requeridos");
-                return ResponseEntity.badRequest().body("Faltan campos requeridos");
+                response.put("success", false);
+                response.put("message", "Faltan campos requeridos");
+                return ResponseEntity.badRequest().body(response);
             }
 
             // Leer pacientes existentes del archivo
@@ -102,39 +110,16 @@ public class PacienteController {
             objectMapper.writeValue(file, pacientes);
 
             System.out.println("Paciente guardado exitosamente");
-            return ResponseEntity.ok("Paciente guardado exitosamente");
+            response.put("success", true);
+            response.put("message", "Paciente guardado exitosamente");
+            response.put("paciente", paciente);
+            return ResponseEntity.ok(response);
 
         } catch (Exception e) {
             System.out.println("Error al guardar paciente: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error al guardar el paciente: " + e.getMessage());
-        }
-    }
-    @PostMapping("/pacienteGuardar")
-    public ResponseEntity<String> savePacienteToJson(@RequestBody Paciente paciente) {
-        System.out.println("Método savePacienteToJson() llamado con paciente: " + paciente);
-        try {
-            // Validar que el paciente no sea nulo
-            if (paciente == null) {
-                System.out.println("Error: El paciente es nulo");
-                return ResponseEntity
-                    .badRequest()
-                    .body("El paciente no puede ser nulo");
-            }
-
-            // Intentar guardar el paciente en el archivo JSON
-            pacienteService.savePacienteToJson(paciente);
-
-            System.out.println("Paciente guardado exitosamente en JSON");
-            return ResponseEntity
-                .ok()
-                .body("Paciente guardado exitosamente en el archivo JSON");
-
-        } catch (Exception e) {
-            System.out.println("Error al guardar paciente en JSON: " + e.getMessage());
-            return ResponseEntity
-                .status(HttpStatus.INTERNAL_SERVER_ERROR)
-                .body("Error al guardar el paciente en el archivo JSON: " + e.getMessage());
+            response.put("success", false);
+            response.put("message", "Error al guardar el paciente: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
         }
     }
 

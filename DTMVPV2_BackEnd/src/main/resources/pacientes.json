@@ -68,19 +68,5 @@
         "fechaNacimiento": "1995-07-18",
         "edad": 29,
         "tipoSangre": "O-"
-    },
-    {
-        "numeroSeguridadSocial": "2283756014",
-        "numeroExpediente": "123456",
-        "curp": "COTD940306HVZBRV00",
-        "nombre": "Jose David",
-        "primerApellido": "Cobos",
-        "segundoApellido": "Trujillo",
-        "escolaridad": "Licenciatura",
-        "estadoCivil": "Soltero",
-        "sexo": "M",
-        "fechaNacimiento": "2025-03-05",
-        "edad": 0,
-        "tipoSangre": "A+"
     }
 ]
