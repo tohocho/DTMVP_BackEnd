@@ -152,34 +152,6 @@ public class PacienteController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
-    @GetMapping("/encryptEstudios/{numeroSeguridadSocial}")
-    public ResponseEntity<Map<String, String>> getEncryptedEstudios(@PathVariable String numeroSeguridadSocial) {
-        
-        System.out.println("Método getEncryptedEstudios() llamado con NSS: " + numeroSeguridadSocial);
-        try {
-            // Obtener estudios del paciente
-            List<Estudio> estudios = estudioService.getEstudiosByNumeroSeguridadSocial(numeroSeguridadSocial);
-            if (estudios == null || estudios.isEmpty()) {
-                System.out.println("No se encontraron estudios para el paciente");
-                return ResponseEntity.notFound().build();
-            }
-
-            // Convertir lista de estudios a JSON y encriptar
-            String estudiosJson = objectMapper.writeValueAsString(estudios);
-            String encryptedInfo = encryptionService.encrypt(estudiosJson);
-
-            Map<String, String> response = new HashMap<>();
-            response.put("encrypted_data", encryptedInfo);
-            System.out.println("Encrypted Data: " + encryptedInfo);
-
-            System.out.println("Datos de estudios encriptados exitosamente");
-            return ResponseEntity.ok(response);
-
-        } catch (Exception e) {
-            System.out.println("Error en el proceso de encriptación de estudios: " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
 
     @PostMapping("/decrypt")
     public ResponseEntity<Void> decryptPaciente(@RequestBody Map<String, String> request) {
