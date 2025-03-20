@@ -1,7 +1,9 @@
 package com.example.controller;
 
 import com.example.model.Paciente;
+import com.example.model.Estudio;
 import com.example.service.PacienteService;
+import com.example.service.EstudioService;
 import com.example.service.EncryptionService;
 import com.example.service.PdfService;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -26,6 +28,9 @@ public class PacienteController {
 
     @Autowired
     private PacienteService pacienteService;
+
+    @Autowired
+    private EstudioService estudioService;
 
     @Autowired
     private EncryptionService encryptionService;
@@ -53,17 +58,6 @@ public class PacienteController {
         } else {
             System.out.println("No se encontró paciente con NSS: " + numeroSeguridadSocial);
             return ResponseEntity.notFound().build();
-        }
-    }
-    @GetMapping("/json")
-    public ResponseEntity<List<Paciente>> getPacientesFromJson() {
-        System.out.println("Método getPacientesFromJson() llamado");
-        try {
-            List<Paciente> pacientes = pacienteService.obtenerPacientes();
-            return ResponseEntity.ok(pacientes);
-        } catch (Exception e) {
-            System.out.println("Error en getPacientesFromJson(): " + e.getMessage());
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 
@@ -128,6 +122,91 @@ public class PacienteController {
         System.out.println("Método createPaciente() llamado con paciente: " + paciente);
         Paciente savedPaciente = pacienteService.savePaciente(paciente);
         return ResponseEntity.ok(savedPaciente);
+    }
+
+    @GetMapping("/encryptPaciente/{numeroSeguridadSocial}")
+    public ResponseEntity<Map<String, String>> getEncryptedPaciente(@PathVariable String numeroSeguridadSocial) {
+        
+        System.out.println("Método getEncryptedPaciente() llamado con NSS: " + numeroSeguridadSocial);
+        try {
+            // Obtener paciente
+            Paciente paciente = pacienteService.getPacienteByNumeroSeguridadSocial(numeroSeguridadSocial);
+            if (paciente == null) {
+                System.out.println("No se encontró el paciente");
+                return ResponseEntity.notFound().build();
+            }
+
+            // Convertir paciente a JSON y encriptar
+            String pacienteJson = objectMapper.writeValueAsString(paciente);
+            String encryptedInfo = encryptionService.encrypt(pacienteJson);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("encrypted_data", encryptedInfo);
+            System.out.println("Encrypted Data: " + encryptedInfo);
+
+            System.out.println("Datos encriptados exitosamente");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            System.out.println("Error en el proceso de encriptación: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    @GetMapping("/encryptEstudios/{numeroSeguridadSocial}")
+    public ResponseEntity<Map<String, String>> getEncryptedEstudios(@PathVariable String numeroSeguridadSocial) {
+        
+        System.out.println("Método getEncryptedEstudios() llamado con NSS: " + numeroSeguridadSocial);
+        try {
+            // Obtener estudios del paciente
+            List<Estudio> estudios = estudioService.getEstudiosByNumeroSeguridadSocial(numeroSeguridadSocial);
+            if (estudios == null || estudios.isEmpty()) {
+                System.out.println("No se encontraron estudios para el paciente");
+                return ResponseEntity.notFound().build();
+            }
+
+            // Convertir lista de estudios a JSON y encriptar
+            String estudiosJson = objectMapper.writeValueAsString(estudios);
+            String encryptedInfo = encryptionService.encrypt(estudiosJson);
+
+            Map<String, String> response = new HashMap<>();
+            response.put("encrypted_data", encryptedInfo);
+            System.out.println("Encrypted Data: " + encryptedInfo);
+
+            System.out.println("Datos de estudios encriptados exitosamente");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            System.out.println("Error en el proceso de encriptación de estudios: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping("/decrypt")
+    public ResponseEntity<Void> decryptPaciente(@RequestBody Map<String, String> request) {
+        System.out.println("Método decryptPaciente() llamado");
+        try {
+            String encryptedData = request.get("encrypted_data");
+            if (encryptedData == null) {
+                System.out.println("No se proporcionaron datos encriptados");
+                return ResponseEntity.badRequest().build();
+            }
+
+            String decryptedJson = encryptionService.decrypt(encryptedData);
+            Paciente paciente = objectMapper.readValue(decryptedJson, Paciente.class);
+
+            System.out.println("Datos desencriptados:");
+            System.out.println("Número de Seguridad Social: " + paciente.getNumeroSeguridadSocial());
+            System.out.println("Nombre: " + paciente.getNombre());
+            System.out.println("Primer Apellido: " + paciente.getPrimerApellido());
+            System.out.println("Segundo Apellido: " + paciente.getSegundoApellido());
+            System.out.println("CURP: " + paciente.getCurp());
+            
+            return ResponseEntity.ok().build();
+
+        } catch (Exception e) {
+            System.out.println("Error en el proceso de desencriptación: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GetMapping("/encrypted-info/{numeroSeguridadSocial}")
