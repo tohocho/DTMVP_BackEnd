@@ -288,4 +288,57 @@ public class PacienteController {
             ));
         }
     }
+
+    @PostMapping("/desencriptar-datos")
+    public ResponseEntity<Map<String, Object>> desencriptarDatos(@RequestBody Map<String, Object> request) {
+        System.out.println("Método desencriptarDatos() llamado");
+        System.out.println("Request: " + request);
+        Map<String, Object> response = new HashMap<>();
+        
+        try {
+            // Obtener la estructura anidada
+            Map<String, Object> datos = (Map<String, Object>) request.get("datos");
+            if (datos == null) {
+                response.put("estado", "error");
+                response.put("mensaje", "No se encontró el objeto 'datos'");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            Map<String, Object> datosEncriptados = (Map<String, Object>) datos.get("datosEncriptados");
+            if (datosEncriptados == null) {
+                response.put("estado", "error");
+                response.put("mensaje", "No se encontró el objeto 'datosEncriptados'");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            String encryptedData = (String) datosEncriptados.get("encrypted_data");
+            System.out.println("Encrypted data: " + encryptedData);
+
+            if (encryptedData == null || encryptedData.trim().isEmpty()) {
+                response.put("estado", "error");
+                response.put("mensaje", "No se encontraron datos encriptados");
+                return ResponseEntity.badRequest().body(response);
+            }
+
+            // Desencriptar los datos
+            String decryptedJson = encryptionService.decrypt(encryptedData);
+            
+            // Convertir el JSON desencriptado a un objeto Paciente
+            Paciente paciente = objectMapper.readValue(decryptedJson, Paciente.class);
+
+            // Preparar la respuesta
+            response.put("estado", "exitoso");
+            response.put("mensaje", "Datos desencriptados correctamente");
+            response.put("datos", paciente);
+
+            System.out.println("Datos desencriptados exitosamente");
+            return ResponseEntity.ok(response);
+
+        } catch (Exception e) {
+            System.out.println("Error en el proceso de desencriptación: " + e.getMessage());
+            response.put("estado", "error");
+            response.put("mensaje", "Error al desencriptar los datos: " + e.getMessage());
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
+        }
+    }
 } 
